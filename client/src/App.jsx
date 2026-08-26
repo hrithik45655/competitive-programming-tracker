@@ -16,6 +16,7 @@ import Revisions from './pages/Revisions';
 import Analytics from './pages/Analytics';
 import Recommendations from './pages/Recommendations';
 import AddProblem from './pages/AddProblem';
+import EditProblem from './pages/EditProblem';
 import Profile from './pages/Profile';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/problems" element={<Problems />} />
               <Route path="/problems/add" element={<AddProblem />} />
+              <Route path="/problems/edit/:id" element={<EditProblem />} />
               <Route path="/revisions" element={<Revisions />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/recommendations" element={<Recommendations />} />

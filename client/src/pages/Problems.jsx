@@ -4,7 +4,7 @@ import api from '../services/api';
 import { Card, CardContent } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
-import { Search, Plus, Filter, MoreHorizontal, ChevronLeft, ChevronRight, Hash } from 'lucide-react';
+import { Search, Plus, Filter, MoreHorizontal, ChevronLeft, ChevronRight, Hash, Edit2, Trash2 } from 'lucide-react';
 
 export default function Problems() {
   const [problems, setProblems] = useState([]);
@@ -12,7 +12,19 @@ export default function Problems() {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate();
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this problem?')) return;
+    try {
+      await api.delete(`/problems/${id}`);
+      fetchProblems(searchTerm);
+    } catch (err) {
+      console.error('Failed to delete problem', err);
+      alert('Failed to delete problem');
+    }
+  };
 
   const fetchProblems = async (search = '') => {
     setLoading(true);
@@ -134,10 +146,39 @@ export default function Problems() {
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-sm">
                       {new Date(problem.nextRevisionDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-gray-400 hover:text-gray-900 dark:hover:text-white opacity-0 group-hover:opacity-100 transition-all p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10">
+                    <td className="px-6 py-4 text-right relative">
+                      <button 
+                        onClick={() => setActiveDropdown(activeDropdown === problem._id ? null : problem._id)}
+                        className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
+                      
+                      {activeDropdown === problem._id && (
+                        <>
+                          <div className="fixed inset-0 z-10" onClick={() => setActiveDropdown(null)}></div>
+                          <div className="absolute right-8 top-10 z-20 w-36 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
+                            <button 
+                              onClick={() => {
+                                navigate(`/problems/edit/${problem._id}`);
+                                setActiveDropdown(null);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
+                            >
+                              <Edit2 className="h-3.5 w-3.5" /> Edit
+                            </button>
+                            <button 
+                              onClick={() => {
+                                handleDelete(problem._id);
+                                setActiveDropdown(null);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center gap-2"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" /> Delete
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))
