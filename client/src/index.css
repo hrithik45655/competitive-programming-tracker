@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode to work with our ThemeContext */
+@custom-variant dark (&:where(.dark, .dark *));
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+.dark body {
+  @apply bg-gray-950 text-gray-100;
+}
