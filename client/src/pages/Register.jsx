@@ -1,91 +1,92 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
+import { Code2 } from 'lucide-react';
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
-    
+    setLoading(true);
     try {
-      await register({ username, email, password });
+      await register(formData.username, formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
-      if (err.response?.data?.errors) {
-        setError(err.response.data.errors.map(e => e.msg).join(', '));
-      } else {
-        setError(err.response?.data?.message || 'Registration failed.');
-      }
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 md:p-8 shadow-sm">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100 text-center">Create Account</h2>
-      
+    <div className="animate-in fade-in duration-700 slide-in-from-bottom-4">
+      <div className="flex items-center gap-2 mb-8">
+        <div className="p-1.5 bg-gray-900 dark:bg-white rounded-lg shadow-sm">
+          <Code2 className="h-5 w-5 text-white dark:text-gray-900" />
+        </div>
+        <span className="font-bold tracking-wide text-gray-900 dark:text-white">CPTracker</span>
+      </div>
+
+      <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Create your account</h2>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Start tracking your competitive programming journey.</p>
+
       {error && (
-        <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-md text-sm">
+        <div className="p-3 mb-6 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-lg border border-red-100 dark:border-red-500/20 font-medium">
           {error}
         </div>
       )}
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Username</label>
           <Input 
             type="text" 
-            value={username} 
-            onChange={e => setUsername(e.target.value)} 
-            placeholder="e.g. coder_ninja"
             required 
-            minLength={3}
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            placeholder="johndoe"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email Address</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email address</label>
           <Input 
             type="email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            placeholder="you@example.com"
             required 
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="you@example.com"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
           <Input 
             type="password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            placeholder="••••••••"
             required 
-            minLength={6}
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            placeholder="••••••••"
           />
         </div>
-        <div className="pt-2">
-          <Button type="submit" className="w-full" isLoading={isLoading}>
-            Sign Up
-          </Button>
-        </div>
+
+        <Button type="submit" className="w-full mt-2" isLoading={loading}>
+          Create account
+        </Button>
       </form>
-      
-      <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-        Already have an account? <Link to="/login" className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">Log in</Link>
-      </div>
+
+      <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+        Already have an account?{' '}
+        <Link to="/login" className="font-semibold text-gray-900 dark:text-white hover:underline transition-all">
+          Sign in
+        </Link>
+      </p>
     </div>
   );
 }
