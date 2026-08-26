@@ -4,6 +4,7 @@ import api from '../services/api';
 import { Card, CardContent } from '../components/ui/Card';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { ArrowLeft, BookOpen, Clock, Target, Code2 } from 'lucide-react';
 
 export default function AddProblem() {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ export default function AddProblem() {
         topics: formData.topics.split(',').map(t => t.trim()).filter(Boolean)
       };
       await api.post('/problems', payload);
-      navigate('/problems'); // redirect back to problem list
+      navigate('/problems');
     } catch (err) {
       console.error(err);
       alert('Failed to add problem: ' + (err.response?.data?.message || err.message));
@@ -33,52 +34,85 @@ export default function AddProblem() {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const selectStyles = "w-full h-10 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#09090b] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-white/30 text-gray-900 dark:text-gray-100 shadow-sm transition-colors";
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Log New Problem</h2>
-        <p className="text-gray-500 dark:text-gray-400">Add a problem to your tracker to schedule it for spaced repetition.</p>
+    <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center gap-4 border-b border-gray-200 dark:border-white/10 pb-6">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 transition-colors">
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Log New Problem</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Record a solved problem to schedule it for spaced repetition.</p>
+        </div>
       </div>
-      <Card>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1 dark:text-gray-300">Problem Title</label>
-              <Input name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Two Sum" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Platform</label>
-                <select name="platform" value={formData.platform} onChange={handleChange} className="w-full h-10 rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  {['LeetCode', 'CodeChef', 'Codeforces', 'HackerRank', 'GeeksforGeeks', 'Other'].map(p => <option key={p} className="dark:bg-gray-900">{p}</option>)}
-                </select>
+
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
+          <form onSubmit={handleSubmit} className="divide-y divide-gray-100 dark:divide-white/5">
+            {/* Core Details */}
+            <div className="p-6 md:p-8 space-y-6">
+              <div className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-4">
+                <Code2 className="h-4 w-4 text-indigo-500" /> Core Details
               </div>
+              
               <div>
-                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Difficulty</label>
-                <select name="difficulty" value={formData.difficulty} onChange={handleChange} className="w-full h-10 rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  {['Easy', 'Medium', 'Hard'].map(p => <option key={p} className="dark:bg-gray-900">{p}</option>)}
-                </select>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Problem Title</label>
+                <Input name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Two Sum" className="max-w-xl" />
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1 dark:text-gray-300">Topics (comma separated)</label>
-              <Input name="topics" value={formData.topics} onChange={handleChange} placeholder="Array, Dynamic Programming, Two Pointers" required />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Confidence Level</label>
-                <select name="confidence" value={formData.confidence} onChange={handleChange} className="w-full h-10 rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  {['Independent', 'Hint Needed', 'Solution Watched'].map(p => <option key={p} className="dark:bg-gray-900">{p}</option>)}
-                </select>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Platform</label>
+                  <select name="platform" value={formData.platform} onChange={handleChange} className={selectStyles}>
+                    {['LeetCode', 'CodeChef', 'Codeforces', 'HackerRank', 'GeeksforGeeks', 'Other'].map(p => <option key={p} className="bg-white dark:bg-[#09090b]">{p}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Difficulty</label>
+                  <select name="difficulty" value={formData.difficulty} onChange={handleChange} className={selectStyles}>
+                    {['Easy', 'Medium', 'Hard'].map(p => <option key={p} className="bg-white dark:bg-[#09090b]">{p}</option>)}
+                  </select>
+                </div>
               </div>
+
               <div>
-                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Time Spent (minutes)</label>
-                <Input type="number" name="timeSpent" value={formData.timeSpent} onChange={handleChange} min="0" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Topics</label>
+                <Input name="topics" value={formData.topics} onChange={handleChange} placeholder="Array, Dynamic Programming, Two Pointers (comma separated)" required className="max-w-xl" />
               </div>
             </div>
-            <div className="pt-4 flex gap-4">
-              <Button type="button" variant="outline" onClick={() => navigate('/problems')} className="flex-1">Cancel</Button>
-              <Button type="submit" isLoading={loading} className="flex-1">Save & Schedule</Button>
+
+            {/* Performance */}
+            <div className="p-6 md:p-8 space-y-6 bg-gray-50/50 dark:bg-white/[0.02]">
+              <div className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-4">
+                <Target className="h-4 w-4 text-emerald-500" /> Performance & Scheduling
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Confidence Level</label>
+                  <select name="confidence" value={formData.confidence} onChange={handleChange} className={selectStyles}>
+                    {['Independent', 'Hint Needed', 'Solution Watched'].map(p => <option key={p} className="bg-white dark:bg-[#09090b]">{p}</option>)}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-2">This determines when you'll review it next.</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Time Spent (minutes)</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <Input type="number" name="timeSpent" value={formData.timeSpent} onChange={handleChange} min="0" className="pl-9" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="p-6 md:p-8 flex items-center gap-4 bg-gray-50 dark:bg-white/[0.04]">
+              <Button type="button" variant="ghost" onClick={() => navigate('/problems')}>Cancel</Button>
+              <Button type="submit" isLoading={loading}>Save & Schedule Revision</Button>
             </div>
           </form>
         </CardContent>
