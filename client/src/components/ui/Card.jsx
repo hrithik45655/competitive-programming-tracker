@@ -8,7 +8,7 @@ function cn(...inputs) {
 
 export function Card({ className, children, ...props }) {
   return (
-    <div className={cn("bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm", className)} {...props}>
+    <div className={cn("bg-white dark:bg-[#09090b] border border-gray-200 dark:border-white/10 rounded-xl shadow-sm transition-all duration-200", className)} {...props}>
       {children}
     </div>
   );
@@ -16,7 +16,7 @@ export function Card({ className, children, ...props }) {
 
 export function CardHeader({ className, children, ...props }) {
   return (
-    <div className={cn("flex flex-col space-y-1.5 p-6", className)} {...props}>
+    <div className={cn("flex flex-col space-y-1.5 p-6 pb-4", className)} {...props}>
       {children}
     </div>
   );
@@ -24,7 +24,7 @@ export function CardHeader({ className, children, ...props }) {
 
 export function CardTitle({ className, children, ...props }) {
   return (
-    <h3 className={cn("font-semibold leading-none tracking-tight text-gray-900 dark:text-gray-100", className)} {...props}>
+    <h3 className={cn("text-sm font-semibold tracking-tight text-gray-900 dark:text-gray-100", className)} {...props}>
       {children}
     </h3>
   );

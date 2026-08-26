@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import { CheckCircle, Clock, Flame, List as ListIcon, Brain } from 'lucide-react';
+import { CheckCircle2, Clock, Flame, BrainCircuit, Activity, BookOpen, AlertCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function Dashboard() {
@@ -26,75 +26,80 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <Activity className="h-8 w-8 animate-pulse text-gray-400" />
       </div>
     );
   }
 
   if (!data) {
-    return <div className="text-red-500">Failed to load dashboard data.</div>;
+    return (
+      <div className="flex h-64 items-center justify-center text-gray-500 dark:text-gray-400 flex-col gap-2">
+        <AlertCircle className="h-6 w-6" />
+        <p>Failed to load dashboard data.</p>
+      </div>
+    );
   }
 
   const confidenceData = [
-    { name: 'Independent', value: data.independentCount, color: '#10b981' },
-    { name: 'Hint Needed', value: data.hintCount, color: '#f59e0b' },
-    { name: 'Solution Watched', value: data.solutionCount, color: '#ef4444' }
+    { name: 'Independent', value: data.independentCount, color: '#fafafa' }, // Light color in dark mode
+    { name: 'Hint Needed', value: data.hintCount, color: '#a1a1aa' },
+    { name: 'Solution Watched', value: data.solutionCount, color: '#3f3f46' }
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Dashboard Overview</h2>
-        <p className="text-gray-500 dark:text-gray-400">Track your competitive programming progression.</p>
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col gap-1 border-b border-gray-200 dark:border-white/10 pb-6">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Overview</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Your competitive programming journey at a glance.</p>
       </div>
       
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Solved</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
+        <Card className="hover:border-gray-300 dark:hover:border-white/20 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-gray-500 dark:text-gray-400 font-medium">Total Solved</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold dark:text-white">{data.solvedCount || 0}</div>
-            <p className="text-xs text-gray-500 mt-1">Out of {data.totalProblems} tracked</p>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">{data.solvedCount || 0}</div>
+            <p className="text-xs text-gray-400 mt-1">Out of {data.totalProblems} tracked</p>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
-            <Flame className="h-4 w-4 text-orange-500" />
+        <Card className="hover:border-gray-300 dark:hover:border-white/20 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-gray-500 dark:text-gray-400 font-medium">Current Streak</CardTitle>
+            <Flame className="h-4 w-4 text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold dark:text-white">{data.streaks?.currentStreak || 0}</div>
-            <p className="text-xs text-gray-500 mt-1">Best: {data.streaks?.longestStreak || 0} days</p>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">{data.streaks?.currentStreak || 0} <span className="text-lg font-normal text-gray-400">days</span></div>
+            <p className="text-xs text-gray-400 mt-1">Best: {data.streaks?.longestStreak || 0} days</p>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Independent Rate</CardTitle>
-            <Brain className="h-4 w-4 text-indigo-500" />
+        <Card className="hover:border-gray-300 dark:hover:border-white/20 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-gray-500 dark:text-gray-400 font-medium">Independent Rate</CardTitle>
+            <BrainCircuit className="h-4 w-4 text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold dark:text-white">
-              {data.solvedCount > 0 ? Math.round((data.independentCount / data.solvedCount) * 100) : 0}%
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
+              {data.solvedCount > 0 ? Math.round((data.independentCount / data.solvedCount) * 100) : 0}<span className="text-lg font-normal text-gray-400">%</span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">{data.independentCount} problems solved without hints</p>
+            <p className="text-xs text-gray-400 mt-1">{data.independentCount} problems solved solo</p>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Difficulty Spread</CardTitle>
-            <ListIcon className="h-4 w-4 text-blue-500" />
+        <Card className="hover:border-gray-300 dark:hover:border-white/20 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-gray-500 dark:text-gray-400 font-medium">Difficulty</CardTitle>
+            <BookOpen className="h-4 w-4 text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="flex gap-2 text-sm mt-2">
-              <span className="text-green-600 dark:text-green-400 font-medium">E: {data.easyCount}</span>
-              <span className="text-yellow-600 dark:text-yellow-400 font-medium">M: {data.mediumCount}</span>
-              <span className="text-red-600 dark:text-red-400 font-medium">H: {data.hardCount}</span>
+            <div className="flex flex-col gap-1.5 mt-1">
+              <div className="flex items-center text-sm"><div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div> <span className="flex-1 text-gray-600 dark:text-gray-300">Easy</span> <span className="font-medium text-gray-900 dark:text-white">{data.easyCount}</span></div>
+              <div className="flex items-center text-sm"><div className="w-2 h-2 rounded-full bg-amber-500 mr-2"></div> <span className="flex-1 text-gray-600 dark:text-gray-300">Medium</span> <span className="font-medium text-gray-900 dark:text-white">{data.mediumCount}</span></div>
+              <div className="flex items-center text-sm"><div className="w-2 h-2 rounded-full bg-rose-500 mr-2"></div> <span className="flex-1 text-gray-600 dark:text-gray-300">Hard</span> <span className="font-medium text-gray-900 dark:text-white">{data.hardCount}</span></div>
             </div>
           </CardContent>
         </Card>
@@ -105,13 +110,17 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle>Confidence Distribution</CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px]">
+          <CardContent className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={confidenceData}>
-                <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
-                <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+              <BarChart data={confidenceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} 
+                  contentStyle={{ backgroundColor: '#18181b', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} 
+                  itemStyle={{ color: '#fff' }}
+                />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={60}>
                   {confidenceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -121,22 +130,27 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Link to="/problems" className="block w-full text-center bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 dark:text-indigo-300 transition-colors py-3 px-4 rounded-md font-medium text-sm">
-              + Log New Problem
-            </Link>
-            <Link to="/recommendations" className="block w-full text-center bg-gray-50 hover:bg-gray-100 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors py-3 px-4 rounded-md font-medium text-sm">
-              View Recommendations
-            </Link>
-            <Link to="/revisions" className="block w-full text-center bg-gray-50 hover:bg-gray-100 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors py-3 px-4 rounded-md font-medium text-sm">
-              Check Revision Queue
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="col-span-3 flex flex-col gap-4">
+          <Card className="flex-1">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link to="/problems/add" className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-900 dark:text-white transition-colors p-4 rounded-lg font-medium text-sm group border border-transparent dark:hover:border-white/10">
+                <span>Log New Problem</span>
+                <span className="text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">→</span>
+              </Link>
+              <Link to="/recommendations" className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-900 dark:text-white transition-colors p-4 rounded-lg font-medium text-sm group border border-transparent dark:hover:border-white/10">
+                <span>View Recommendations</span>
+                <span className="text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">→</span>
+              </Link>
+              <Link to="/revisions" className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-900 dark:text-white transition-colors p-4 rounded-lg font-medium text-sm group border border-transparent dark:hover:border-white/10">
+                <span>Check Revision Queue</span>
+                <span className="text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">→</span>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

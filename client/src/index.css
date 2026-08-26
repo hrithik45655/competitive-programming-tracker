@@ -1,12 +1,58 @@
 @import "tailwindcss";
 
-/* Enable class-based dark mode to work with our ThemeContext */
 @custom-variant dark (&:where(.dark, .dark *));
 
-body {
-  @apply bg-gray-50 text-gray-900;
+@theme {
+  --color-border: #27272a;
+  --color-input: #27272a;
+  --color-ring: #d4d4d8;
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
 }
 
-.dark body {
-  @apply bg-gray-950 text-gray-100;
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base Light Mode Fallbacks */
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #09090b;
+  --color-border: #e4e4e7;
+}
+
+.dark {
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
+  --color-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Polished Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.5);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Chart Tooltip overrides for Recharts */
+.recharts-tooltip-cursor {
+  fill: rgba(255, 255, 255, 0.05) !important;
 }
