@@ -14,6 +14,11 @@ app.use(cors({
       return callback(null, true);
     }
     
+    // Allow Vercel preview deployments
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
     // Allow production CLIENT_URL
     if (origin === process.env.CLIENT_URL) {
       return callback(null, true);
