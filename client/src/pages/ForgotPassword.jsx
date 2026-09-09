@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { Code2 } from 'lucide-react';
+import api from '../services/api';
 
-export default function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+export default function ForgotPassword() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setMessage('');
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
+      const res = await api.post('/auth/forgot-password', { email });
+      setMessage(res.data.message);
     } catch (err) {
       if (err.response?.data?.errors?.length > 0) {
         setError(err.response.data.errors[0].msg);
-      } else if (err.response?.data?.message) {
-        setError(err.response.data.message);
       } else {
-        setError(err.message || 'Invalid credentials');
+        setError(err.response?.data?.message || 'Something went wrong');
       }
     } finally {
       setLoading(false);
@@ -41,12 +39,18 @@ export default function Login() {
         <span className="font-bold tracking-wide text-gray-900 dark:text-white">CPTracker</span>
       </div>
 
-      <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Welcome back</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Enter your credentials to access your workspace.</p>
+      <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Reset Password</h2>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Enter your email to receive a password reset link.</p>
 
       {error && (
         <div className="p-3 mb-6 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-lg border border-red-100 dark:border-red-500/20 font-medium">
           {error}
+        </div>
+      )}
+      
+      {message && (
+        <div className="p-3 mb-6 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 rounded-lg border border-green-100 dark:border-green-500/20 font-medium">
+          {message}
         </div>
       )}
 
@@ -56,34 +60,21 @@ export default function Login() {
           <Input 
             type="email" 
             required 
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-          />
-        </div>
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-            <Link to="/forgot-password" className="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Forgot password?</Link>
-          </div>
-          <Input 
-            type="password" 
-            required 
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            placeholder="••••••••"
           />
         </div>
 
         <Button type="submit" className="w-full mt-2" isLoading={loading}>
-          Sign in
+          Send Reset Link
         </Button>
       </form>
 
       <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        Don't have an account?{' '}
-        <Link to="/register" className="font-semibold text-gray-900 dark:text-white hover:underline transition-all">
-          Create one now
+        Remember your password?{' '}
+        <Link to="/login" className="font-semibold text-gray-900 dark:text-white hover:underline transition-all">
+          Sign in
         </Link>
       </p>
     </div>

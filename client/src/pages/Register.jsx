@@ -17,10 +17,16 @@ export default function Register() {
     setError('');
     setLoading(true);
     try {
-      await register(formData.username, formData.email, formData.password);
+      await register(formData);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      if (err.response?.data?.errors?.length > 0) {
+        setError(err.response.data.errors[0].msg);
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError(err.message || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }

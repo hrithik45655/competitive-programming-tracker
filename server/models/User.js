@@ -25,13 +25,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
-
-// Index for faster lookups
-userSchema.index({ email: 1 });
 
 module.exports = mongoose.model('User', userSchema);
