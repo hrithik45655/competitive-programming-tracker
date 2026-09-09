@@ -3,25 +3,36 @@ const cors = require('cors');
 
 const app = express();
 
+// Trust proxy for Render deployment (needed for rate limiting)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
-    // Allow any localhost or 127.0.0.1 origin
-    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://competitive-programming-tracker-je3.vercel.app'
+    ];
+
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    
+
     // Allow Vercel preview deployments
     if (origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
-    
-    // Allow production CLIENT_URL (ignoring trailing slashes if accidentally added)
-    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL.replace(/\/$/, '')) {
-      return callback(null, true);
+
+    // Allow production CLIENT_URL (ignoring trailing slashes)
+    if (process.env.CLIENT_URL) {
+      const cleanClientUrl = process.env.CLIENT_URL.replace(/\/$/, '');
+      if (origin === cleanClientUrl) {
+        return callback(null, true);
+      }
     }
 
     callback(new Error('Not allowed by CORS'));
