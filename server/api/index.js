@@ -1,4 +1,4 @@
-const app = require('../server/app');
+const app = require('../app');
 const mongoose = require('mongoose');
 
 let isConnected = false;
