@@ -24,8 +24,8 @@ import Profile from './pages/Profile';
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <Routes>
             {/* Auth Routes */}
             <Route element={<AuthLayout />}>
@@ -51,8 +51,8 @@ function App() {
             {/* 404 Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
