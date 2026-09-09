@@ -19,8 +19,8 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Allow production CLIENT_URL
-    if (origin === process.env.CLIENT_URL) {
+    // Allow production CLIENT_URL (ignoring trailing slashes if accidentally added)
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL.replace(/\/$/, '')) {
       return callback(null, true);
     }
 
